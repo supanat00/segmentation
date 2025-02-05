@@ -1,8 +1,18 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
-  trailingSlash: true, // ✅ ทำให้ Next.js สร้าง Static Files ที่โหลดได้ถูกต้อง
-  output: "export", // ✅ ให้ Build ออกมาเป็น Static
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+    images: {
+        remotePatterns: [
+            {
+                protocol: "https",
+                hostname: "w3schools.com", // ✅ เปลี่ยนเป็นโดเมนของคุณ
+            },
+            {
+                protocol: "https",
+                hostname: "cdn.jsdelivr.net", // ✅ รองรับ CDN
+            },
+        ],
+    },
 };
 
-module.exports = nextConfig;
+export default nextConfig;
