@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
         remotePatterns: [
             {
                 protocol: "https",
-                hostname: "w3schools.com", // ✅ เปลี่ยนเป็นโดเมนของคุณ
+                hostname: "https://www.w3schools.com/html", // ✅ เปลี่ยนเป็นโดเมนของคุณ
             },
             {
                 protocol: "https",
