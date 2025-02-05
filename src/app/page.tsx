@@ -3,7 +3,7 @@
 import React, { useEffect, useRef } from "react";
 import type { Results, SelfieSegmentation as SelfieSegmentationType } from "@mediapipe/selfie_segmentation";
 
-const Home: React.FC = () => {
+export default function App() {
   const inputVideoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
@@ -137,5 +137,3 @@ const Home: React.FC = () => {
     </main>
   );
 };
-
-export default Home;
