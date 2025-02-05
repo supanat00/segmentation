@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
             },
             {
                 protocol: "https",
-                hostname: "cdn.jsdelivr.net", // ✅ รองรับ CDN
+                hostname: "cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/", // ✅ รองรับ CDN
             },
         ],
     },
