@@ -1,6 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+    experimental: {
+        // @ts-ignore: Disable type checking for turbopack setting
+        turbopack: false, // Disable Turbopack; use Webpack instead
+    },
+    reactStrictMode: true,
     images: {
         remotePatterns: [
             {
