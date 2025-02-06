@@ -1,9 +1,10 @@
 "use client"; // Ensure this is a Client Component in Next.js
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import type { Results, SelfieSegmentation as SelfieSegmentationType } from "@mediapipe/selfie_segmentation";
 
 export default function App() {
+  const [started, setStarted] = useState(false);
   const inputVideoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
@@ -11,31 +12,32 @@ export default function App() {
   const selfieSegmentationRef = useRef<SelfieSegmentationType | null>(null);
 
   useEffect(() => {
-    // Prevent running on the server
+    // Only run when "started" becomes true
+    if (!started) return;
     if (typeof window === "undefined") return;
 
-    // Set up the canvas context
+    // Set up canvas context
     if (canvasRef.current) {
       contextRef.current = canvasRef.current.getContext("2d");
     }
 
     // Set up the background video
     if (bgVideoRef.current) {
-      bgVideoRef.current.src = "https://www.w3schools.com/html/mov_bbb.mp4"; // Change this URL if needed
+      bgVideoRef.current.src = "https://www.w3schools.com/html/mov_bbb.mp4"; // Change URL if needed
       bgVideoRef.current.loop = true;
       bgVideoRef.current.muted = true;
+      bgVideoRef.current.playsInline = true;
       bgVideoRef.current.autoplay = true;
-      bgVideoRef.current.play();
+      bgVideoRef.current.play().catch((error) =>
+        console.error("Background video play error:", error)
+      );
     }
 
     const loadSelfieSegmentation = async () => {
-      // Dynamically import the module inside useEffect (avoid top-level await)
       const { SelfieSegmentation } = await import("@mediapipe/selfie_segmentation");
-
-      // Create the instance and store it in a ref
       selfieSegmentationRef.current = new SelfieSegmentation({
         locateFile: (file) =>
-          `../mediapipe/selfie_segmentation/${file}`,
+          `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`,
       });
 
       selfieSegmentationRef.current.setOptions({
@@ -43,7 +45,6 @@ export default function App() {
         selfieMode: true,
       });
 
-      // Set up the onResults callback using the correct type
       selfieSegmentationRef.current.onResults((results: Results) => {
         const ctx = contextRef.current;
         if (!ctx || !canvasRef.current) return;
@@ -78,7 +79,7 @@ export default function App() {
         ctx.restore();
       });
 
-      // Get camera stream and start processing
+      // Request camera stream
       if (navigator.mediaDevices?.getUserMedia) {
         const constraints: MediaStreamConstraints = {
           video: { width: { ideal: 1280 }, height: { ideal: 720 } },
@@ -97,7 +98,6 @@ export default function App() {
       }
     };
 
-    // Define the function to continuously process frames
     const sendToMediaPipe = async () => {
       if (!inputVideoRef.current?.videoWidth) {
         requestAnimationFrame(sendToMediaPipe);
@@ -109,22 +109,34 @@ export default function App() {
 
     loadSelfieSegmentation();
 
-    // Clean up when component unmounts
     return () => {
       if (selfieSegmentationRef.current) {
         selfieSegmentationRef.current.close();
       }
     };
-  }, []);
+  }, [started]);
 
   return (
     <main className="relative flex items-center justify-center w-full h-full bg-gray-900 text-white">
+      {/* Interactive button overlay */}
+      {!started && (
+        <div className="absolute inset-0 flex items-center justify-center z-[9999]">
+          <button
+            onClick={() => setStarted(true)}
+            className="px-6 py-3 text-xl font-bold text-white bg-blue-600 rounded"
+          >
+            กด ยืนยัน เพื่อเริ่มเล่น
+          </button>
+        </div>
+      )}
+
       {/* Hidden video element for the camera stream */}
-      <video autoPlay ref={inputVideoRef} style={{ display: "none" }} />
+      <video playsInline autoPlay ref={inputVideoRef} style={{ display: "none" }} />
+
       {/* Background video */}
       <video
         ref={bgVideoRef}
-        className="absolute w-full h-full object-cover"
+        className="absolute w-full h-full object-cover z-0"
         muted
         playsInline
         loop
@@ -132,8 +144,14 @@ export default function App() {
       >
         <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
       </video>
+
       {/* Canvas for segmentation output */}
-      <canvas ref={canvasRef} width="720px" height="1280px" className="absolute top-0 left-0 w-full h-full" />
+      <canvas
+        ref={canvasRef}
+        width="720px"
+        height="1280px"
+        className="absolute top-0 left-0 w-full h-full z-10"
+      />
     </main>
   );
-};
+}
