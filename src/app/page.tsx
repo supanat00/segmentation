@@ -59,8 +59,8 @@ export default function App() {
         const scale = Math.min(canvasWidth / videoWidth, canvasHeight / videoHeight);
         const newWidth = videoWidth * scale;
         const newHeight = videoHeight * scale;
-        const xOffset = (canvasWidth - newWidth) / 1;
-        const yOffset = (canvasHeight - newHeight) / 1;
+        const xOffset = (canvasWidth - newWidth) / 2;
+        const yOffset = (canvasHeight - newHeight) / 2;
 
         // Draw the segmented person image
         ctx.drawImage(results.image, xOffset, yOffset, newWidth, newHeight);
@@ -118,7 +118,7 @@ export default function App() {
   }, []);
 
   return (
-    <main className="relative flex items-center justify-center min-h-screen bg-gray-900 text-white">
+    <main className="relative flex items-center justify-center w-full h-full bg-gray-900 text-white">
       {/* Hidden video element for the camera stream */}
       <video autoPlay ref={inputVideoRef} style={{ display: "none" }} />
       {/* Background video */}
