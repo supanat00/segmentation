@@ -50,7 +50,7 @@ export default function App() {
 
       selfieSegmentationRef.current = new SelfieSegmentation({
         locateFile: (file) =>
-          `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`,
+          `/mediapipe/selfie_segmentation/${file}`,
       });
 
       selfieSegmentationRef.current.setOptions({
