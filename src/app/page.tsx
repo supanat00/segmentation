@@ -131,7 +131,7 @@ export default function App() {
       )}
 
       {/* Hidden video element for the camera stream */}
-      <video playsInline autoPlay ref={inputVideoRef} style={{ display: "none" }} />
+      <video playsInline muted autoPlay ref={inputVideoRef} style={{ display: "none" }} />
 
       {/* Background video */}
       <video
