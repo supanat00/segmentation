@@ -1,7 +1,7 @@
 "use client"; // Ensure this is a Client Component in Next.js
 
 import React, { useEffect, useRef } from "react";
-import type { Results, SelfieSegmentation as SelfieSegmentationType } from "@mediapipe/selfie_segmentation";
+import type { SelfieSegmentation as SelfieSegmentationType } from "@mediapipe/selfie_segmentation";
 
 export default function App() {
   const inputVideoRef = useRef<HTMLVideoElement | null>(null);
@@ -28,86 +28,86 @@ export default function App() {
       bgVideoRef.current.play();
     }
 
-    const loadSelfieSegmentation = async () => {
-      // Dynamically import the module inside useEffect (avoid top-level await)
-      const { SelfieSegmentation } = await import("@mediapipe/selfie_segmentation");
+    // const loadSelfieSegmentation = async () => {
+    //   // Dynamically import the module inside useEffect (avoid top-level await)
+    //   const { SelfieSegmentation } = await import("@mediapipe/selfie_segmentation");
 
-      // Create the instance and store it in a ref
-      selfieSegmentationRef.current = new SelfieSegmentation({
-        locateFile: (file) =>
-          `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`,
-      });
+    //   // Create the instance and store it in a ref
+    //   selfieSegmentationRef.current = new SelfieSegmentation({
+    //     locateFile: (file) =>
+    //       `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`,
+    //   });
 
-      selfieSegmentationRef.current.setOptions({
-        modelSelection: 1,
-        selfieMode: true,
-      });
+    //   selfieSegmentationRef.current.setOptions({
+    //     modelSelection: 1,
+    //     selfieMode: true,
+    //   });
 
-      // Set up the onResults callback using the correct type
-      selfieSegmentationRef.current.onResults((results: Results) => {
-        const ctx = contextRef.current;
-        if (!ctx || !canvasRef.current) return;
+    //   // Set up the onResults callback using the correct type
+    //   selfieSegmentationRef.current.onResults((results: Results) => {
+    //     const ctx = contextRef.current;
+    //     if (!ctx || !canvasRef.current) return;
 
-        ctx.save();
-        ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    //     ctx.save();
+    //     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
-        // Calculate proper scale and positioning
-        const videoWidth = results.image.width;
-        const videoHeight = results.image.height;
-        const canvasWidth = canvasRef.current.width;
-        const canvasHeight = canvasRef.current.height;
-        const scale = Math.min(canvasWidth / videoWidth, canvasHeight / videoHeight);
-        const newWidth = videoWidth * scale;
-        const newHeight = videoHeight * scale;
-        const xOffset = (canvasWidth - newWidth) / 1;
-        const yOffset = (canvasHeight - newHeight) / 1;
+    //     // Calculate proper scale and positioning
+    //     const videoWidth = results.image.width;
+    //     const videoHeight = results.image.height;
+    //     const canvasWidth = canvasRef.current.width;
+    //     const canvasHeight = canvasRef.current.height;
+    //     const scale = Math.min(canvasWidth / videoWidth, canvasHeight / videoHeight);
+    //     const newWidth = videoWidth * scale;
+    //     const newHeight = videoHeight * scale;
+    //     const xOffset = (canvasWidth - newWidth) / 1;
+    //     const yOffset = (canvasHeight - newHeight) / 1;
 
-        // Draw the segmented person image
-        ctx.drawImage(results.image, xOffset, yOffset, newWidth, newHeight);
+    //     // Draw the segmented person image
+    //     ctx.drawImage(results.image, xOffset, yOffset, newWidth, newHeight);
 
-        // Apply the segmentation mask to cut out the background
-        ctx.globalCompositeOperation = "destination-in";
-        ctx.drawImage(results.segmentationMask, xOffset, yOffset, newWidth, newHeight);
+    //     // Apply the segmentation mask to cut out the background
+    //     ctx.globalCompositeOperation = "destination-in";
+    //     ctx.drawImage(results.segmentationMask, xOffset, yOffset, newWidth, newHeight);
 
-        // Draw the background video behind the person
-        ctx.globalCompositeOperation = "destination-over";
-        if (bgVideoRef.current && bgVideoRef.current.readyState >= 2) {
-          ctx.drawImage(bgVideoRef.current, 0, 0, canvasWidth, canvasHeight);
-        }
+    //     // Draw the background video behind the person
+    //     ctx.globalCompositeOperation = "destination-over";
+    //     if (bgVideoRef.current && bgVideoRef.current.readyState >= 2) {
+    //       ctx.drawImage(bgVideoRef.current, 0, 0, canvasWidth, canvasHeight);
+    //     }
 
-        ctx.restore();
-      });
+    //     ctx.restore();
+    //   });
 
-      // Get camera stream and start processing
-      if (navigator.mediaDevices?.getUserMedia) {
-        const constraints: MediaStreamConstraints = {
-          video: { width: { ideal: 1280 }, height: { ideal: 720 } },
-        };
+    //   // Get camera stream and start processing
+    //   if (navigator.mediaDevices?.getUserMedia) {
+    //     const constraints: MediaStreamConstraints = {
+    //       video: { width: { ideal: 1280 }, height: { ideal: 720 } },
+    //     };
 
-        navigator.mediaDevices.getUserMedia(constraints)
-          .then((stream) => {
-            if (inputVideoRef.current) {
-              inputVideoRef.current.srcObject = stream;
-            }
-            sendToMediaPipe();
-          })
-          .catch((error) => {
-            console.error("Error accessing camera:", error);
-          });
-      }
-    };
+    //     navigator.mediaDevices.getUserMedia(constraints)
+    //       .then((stream) => {
+    //         if (inputVideoRef.current) {
+    //           inputVideoRef.current.srcObject = stream;
+    //         }
+    //         sendToMediaPipe();
+    //       })
+    //       .catch((error) => {
+    //         console.error("Error accessing camera:", error);
+    //       });
+    //   }
+    // };
 
     // Define the function to continuously process frames
-    const sendToMediaPipe = async () => {
-      if (!inputVideoRef.current?.videoWidth) {
-        requestAnimationFrame(sendToMediaPipe);
-      } else if (selfieSegmentationRef.current) {
-        await selfieSegmentationRef.current.send({ image: inputVideoRef.current });
-        requestAnimationFrame(sendToMediaPipe);
-      }
-    };
+    // const sendToMediaPipe = async () => {
+    //   if (!inputVideoRef.current?.videoWidth) {
+    //     requestAnimationFrame(sendToMediaPipe);
+    //   } else if (selfieSegmentationRef.current) {
+    //     await selfieSegmentationRef.current.send({ image: inputVideoRef.current });
+    //     requestAnimationFrame(sendToMediaPipe);
+    //   }
+    // };
 
-    loadSelfieSegmentation();
+    // loadSelfieSegmentation();
 
     // Clean up when component unmounts
     return () => {
