@@ -35,7 +35,7 @@ export default function App() {
       // Create the instance and store it in a ref
       selfieSegmentationRef.current = new SelfieSegmentation({
         locateFile: (file) =>
-          `../mediapipe/selfie_segmentation/${file}`,
+          `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`,
       });
 
       selfieSegmentationRef.current.setOptions({
