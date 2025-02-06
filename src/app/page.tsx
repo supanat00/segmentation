@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import type { Results, SelfieSegmentation as SelfieSegmentationType } from "@mediapipe/selfie_segmentation";
-import Head from "next/head";
 import liff from "@line/liff";
 
 export default function App() {
@@ -131,9 +130,6 @@ export default function App() {
 
   return (
     <>
-      <Head>
-        <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js" />
-      </Head>
       <main className="relative flex items-center justify-center w-full h-full bg-gray-900 text-white">
         {/* Overlay button: Show only if LIFF is initialized and not started */}
         {!started && liffInitialized && (
